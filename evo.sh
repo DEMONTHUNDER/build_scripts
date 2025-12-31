@@ -47,4 +47,4 @@ echo "Lunch command executed."
 echo "========================="
 echo "Starting ROM Compilation..."
 echo "========================="
-m m evolution -j$(nproc --all)
+m evolution -j$(nproc --all)
