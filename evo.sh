@@ -1,4 +1,6 @@
 #!/bin/bash
+#vars
+sign=true
 #cleanup
 # 1. Delete the Build Output
 rm -rf out/target/product/larry
@@ -20,8 +22,11 @@ repo init -u https://github.com/Evolution-X/manifest -b bq1 --git-lfs && \
 # Resync sources
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 /opt/crave/resync.sh
-repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
-/opt/crave/resync.sh 
+
+#signing keys
+echo "🔑 Attempting to clone Private Keys..."
+rm -rf vendor/evolution-priv/keys
+git clone https://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@github.com/DEMONTHUNDER/my-private-keys.git vendor/evolution-priv/keys || echo "⚠️ Keys failed to download! Continuing with public Test-Keys..."
 
 #clone device tree
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b lineage-23.1 device/oneplus/larry && \
