@@ -47,4 +47,4 @@ echo "Lunch command executed."
 echo "========================="
 echo "Starting ROM Compilation..."
 echo "========================="
-m pixelos -j$(nproc --all)
+m m evolution -j$(nproc --all)
