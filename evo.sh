@@ -93,7 +93,6 @@ echo -e "${YELLOW}>> Exporting Neutron Compiler Variables...${NC}"
 export TARGET_KERNEL_CLANG_COMPILE=true
 export TARGET_KERNEL_CLANG_VERSION=neutron
 export TARGET_KERNEL_CLANG_PATH=$(pwd)/prebuilts/clang/host/linux-x86/neutron
-export LD_LIBRARY_PATH=$(pwd)/prebuilts/clang/host/linux-x86/neutron/lib:$LD_LIBRARY_PATH
 echo "Environment setup success."
 
 # Lunch before building
