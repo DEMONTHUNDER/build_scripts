@@ -98,7 +98,7 @@ echo "Environment setup success."
 
 # Lunch before building
 echo ">> Lunching target..."
-lunch lineage_larry-bp3a-user
+lunch lineage_larry-bp3a-userdebug
 echo "Lunch command executed."
 
 # Build ROM
