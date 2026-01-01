@@ -62,11 +62,38 @@ git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-
 
 echo -e "${GREEN}✔ All downloads finished.${NC}"
 
+# ========================================================
+#  NEW PHASE: NEUTRON CLANG SETUP
+# ========================================================
+CURRENT_PHASE="NEUTRON SETUP"
+echo -e "\n${BLUE}➜ [PHASE 4/6] Setting up Neutron Clang...${NC}"
+# Create directory
+mkdir -p prebuilts/clang/host/linux-x86/neutron
+cd prebuilts/clang/host/linux-x86/neutron
+
+# Download AntMan and fetch toolchain
+echo -e "${YELLOW}>> Fetching Neutron Toolchain (Stable)...${NC}"
+curl -LO "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman"
+chmod +x antman
+./antman -S
+# Return to root
+cd ../../../../../
+echo -e "${GREEN}✔ Neutron Clang Installed.${NC}"
+
 CURRENT_PHASE="COMPILATION"
 echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
 # Setup the build environment
 echo ">> Setting up environment..."
 . build/envsetup.sh
+
+# ========================================================
+#  FORCE NEUTRON VARIABLES
+# ========================================================
+echo -e "${YELLOW}>> Exporting Neutron Compiler Variables...${NC}"
+export TARGET_KERNEL_CLANG_COMPILE=true
+export TARGET_KERNEL_CLANG_VERSION=neutron
+export TARGET_KERNEL_CLANG_PATH=$(pwd)/prebuilts/clang/host/linux-x86/neutron
+export LD_LIBRARY_PATH=$(pwd)/prebuilts/clang/host/linux-x86/neutron/lib:$LD_LIBRARY_PATH
 echo "Environment setup success."
 
 # Lunch before building
