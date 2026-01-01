@@ -57,7 +57,7 @@ git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr1 vendor/oneplus/sm6375-common && \
 
 #clone kernel and hardware tree
-git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b sixteen-qpr1 kernel/oneplus/sm6375 && \
+git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375_austen.git -b sixteen-qpr1 kernel/oneplus/sm6375 && \
 git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr1 hardware/oplus && \
 
 echo -e "${GREEN}✔ All downloads finished.${NC}"
