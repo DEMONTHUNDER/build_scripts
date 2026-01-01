@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #vars
 sign=true
 # Define colors to make logs easier to read
@@ -11,6 +12,27 @@ NC='\033[0m' # No Color
 # Start the timer
 START_TIME=$(date +%s)
 
+# =========================================================
+#  ENVIRONMENT SANITIZATION (The "Safety" Block)
+# =========================================================
+# 1. Unset dangerous variables that break host tools
+unset LD_LIBRARY_PATH
+unset LD_PRELOAD
+unset PYTHONPATH
+
+# 2. Clear Compiler Flags (Let the ROM build system handle this)
+unset CC
+unset CXX
+unset CPP
+unset CFLAGS
+unset CXXFLAGS
+unset LDFLAGS
+
+# 3. Clear Java/Locale junk
+export LC_ALL=C
+unset JAVA_HOME
+
+echo -e "${GREEN}✔ Environment Cleaned. Ready to build.${NC}"
 #cleanup
 CURRENT_PHASE="CLEANUP"
 echo -e "\n${BLUE}➜ [PHASE 1/5] Cleaning up old files...${NC}"
@@ -65,19 +87,32 @@ echo -e "${GREEN}✔ All downloads finished.${NC}"
 # ========================================================
 #  NEW PHASE: NEUTRON CLANG SETUP
 # ========================================================
-CURRENT_PHASE="NEUTRON SETUP"
-echo -e "\n${BLUE}➜ [PHASE 4/6] Setting up Neutron Clang...${NC}"
-# Create directory
-mkdir -p prebuilts/clang/host/linux-x86/neutron
-cd prebuilts/clang/host/linux-x86/neutron
+# --- PHASE 1: NEUTRON CLANG SETUP (SAFE MODE) ---
+echo -e "${BLUE}➜ [1/5] Setting up Neutron Clang...${NC}"
 
-# Download AntMan and fetch toolchain
-echo -e "${YELLOW}>> Fetching Neutron Toolchain (Stable)...${NC}"
-curl -LO "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman"
-chmod +x antman
-./antman -S
+# 1. Download (Only if missing)
+if [ ! -d "prebuilts/clang/host/linux-x86/neutron" ]; then
+    mkdir -p prebuilts/clang/host/linux-x86/neutron
+    cd prebuilts/clang/host/linux-x86/neutron
+    curl -LO "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman"
+    chmod +x antman
+    ./antman -S --legacy 
+    cd ../../../../../
+fi
+
+# 2. Set Variables (TARGET ONLY)
+# We use absolute paths to be safe
+NEUTRON_PATH="$(pwd)/prebuilts/clang/host/linux-x86/neutron"
+export PATH="${NEUTRON_PATH}/bin:$PATH"
+
+# 3. Tell the Build System to use it
+export TARGET_KERNEL_CLANG_COMPILE=true
+export TARGET_KERNEL_CLANG_VERSION=neutron
+export TARGET_KERNEL_CLANG_PATH="${NEUTRON_PATH}"
+
+# DO NOT export LD_LIBRARY_PATH here! 
+# Neutron knows where its libs are.
 # Return to root
-cd ../../../../../
 echo -e "${GREEN}✔ Neutron Clang Installed.${NC}"
 
 CURRENT_PHASE="COMPILATION"
