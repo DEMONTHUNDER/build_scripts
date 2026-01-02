@@ -90,7 +90,6 @@ echo -e "${GREEN}✔ All downloads finished.${NC}"
 # --- PHASE 1: NEUTRON CLANG SETUP ---
 echo -e "${BLUE}➜ [1/5] Setting up Neutron Clang...${NC}"
 
-# 1. Download (Only if missing)
 if [ ! -d "prebuilts/clang/host/linux-x86/neutron" ]; then
     mkdir -p prebuilts/clang/host/linux-x86/neutron
     cd prebuilts/clang/host/linux-x86/neutron
@@ -108,12 +107,6 @@ export TARGET_KERNEL_CLANG_VERSION=neutron
 export TARGET_KERNEL_CLANG_PATH="${NEUTRON_PATH}"
 echo -e "${GREEN}✔ Neutron Clang Installed.${NC}"
 
-# --- CCACHE SETUP (NEW!) ---
-export USE_CCACHE=1
-export CCACHE_EXEC=/usr/bin/ccache
-export CCACHE_DIR=$(pwd)/.ccache
-ccache -M 50G  # Set cache limit to 50GB
-echo -e "\033[0;32m✔ CCache Enabled (50GB).\033[0m"
 
 CURRENT_PHASE="COMPILATION"
 echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
