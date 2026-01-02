@@ -87,7 +87,7 @@ echo -e "${GREEN}✔ All downloads finished.${NC}"
 # ========================================================
 #  NEW PHASE: NEUTRON CLANG SETUP
 # ========================================================
-# --- PHASE 1: NEUTRON CLANG SETUP (SAFE MODE) ---
+# --- PHASE 1: NEUTRON CLANG SETUP ---
 echo -e "${BLUE}➜ [1/5] Setting up Neutron Clang...${NC}"
 
 # 1. Download (Only if missing)
@@ -108,8 +108,16 @@ export TARGET_KERNEL_CLANG_VERSION=neutron
 export TARGET_KERNEL_CLANG_PATH="${NEUTRON_PATH}"
 echo -e "${GREEN}✔ Neutron Clang Installed.${NC}"
 
+# --- CCACHE SETUP (NEW!) ---
+export USE_CCACHE=1
+export CCACHE_EXEC=/usr/bin/ccache
+export CCACHE_DIR=$(pwd)/.ccache
+ccache -M 50G  # Set cache limit to 50GB
+echo -e "\033[0;32m✔ CCache Enabled (50GB).\033[0m"
+
 CURRENT_PHASE="COMPILATION"
 echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
+
 # Setup the build environment
 echo ">> Setting up environment..."
 . build/envsetup.sh
@@ -119,9 +127,24 @@ echo "Environment setup success."
 echo ">> Lunching target..."
 lunch lineage_larry-bp3a-userdebug
 echo "Lunch command executed."
+
+# ========================================================
+#  🛑 NUCLEAR FIX FOR ERROR 139 (SEGFAULT) 🛑
+# ========================================================
+# 1. Clean broken kernel objects from previous run
+rm -rf out/target/product/larry/obj/KERNEL_OBJ
+rm -rf out/target/product/larry/obj/kernel
+
+# 2. Sanitize Flags (Stop Server from using Neutron libs)
+unset LDFLAGS
+unset HOSTLDFLAGS
+unset CLANG_LDFLAGS
 unset LD_LIBRARY_PATH
+# 3. Force Server to use Stable GCC
 export HOSTCC=gcc
 export HOSTCXX=g++
+# ========================================================
+
 # Build ROM
 echo ">> Compiling..."
 echo "========================="
