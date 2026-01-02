@@ -99,20 +99,13 @@ if [ ! -d "prebuilts/clang/host/linux-x86/neutron" ]; then
     ./antman -S --legacy 
     cd ../../../../../
 fi
-
 # 2. Set Variables (TARGET ONLY)
 # We use absolute paths to be safe
 NEUTRON_PATH="$(pwd)/prebuilts/clang/host/linux-x86/neutron"
 export PATH="${NEUTRON_PATH}/bin:$PATH"
-
-# 3. Tell the Build System to use it
 export TARGET_KERNEL_CLANG_COMPILE=true
 export TARGET_KERNEL_CLANG_VERSION=neutron
 export TARGET_KERNEL_CLANG_PATH="${NEUTRON_PATH}"
-
-# DO NOT export LD_LIBRARY_PATH here! 
-# Neutron knows where its libs are.
-# Return to root
 echo -e "${GREEN}✔ Neutron Clang Installed.${NC}"
 
 CURRENT_PHASE="COMPILATION"
@@ -120,21 +113,15 @@ echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
 # Setup the build environment
 echo ">> Setting up environment..."
 . build/envsetup.sh
-
-# ========================================================
-#  FORCE NEUTRON VARIABLES
-# ========================================================
-echo -e "${YELLOW}>> Exporting Neutron Compiler Variables...${NC}"
-export TARGET_KERNEL_CLANG_COMPILE=true
-export TARGET_KERNEL_CLANG_VERSION=neutron
-export TARGET_KERNEL_CLANG_PATH=$(pwd)/prebuilts/clang/host/linux-x86/neutron
 echo "Environment setup success."
 
 # Lunch before building
 echo ">> Lunching target..."
 lunch lineage_larry-bp3a-userdebug
 echo "Lunch command executed."
-
+unset LD_LIBRARY_PATH
+export HOSTCC=gcc
+export HOSTCXX=g++
 # Build ROM
 echo ">> Compiling..."
 echo "========================="
@@ -150,7 +137,3 @@ ELAPSED=$((END_TIME - START_TIME))
 H=$((ELAPSED / 3600))
 M=$(( (ELAPSED % 3600) / 60 ))
 
-echo -e "\n${GREEN}========================================${NC}"
-echo -e "${GREEN}✅ BUILD SUCCESS! 🚀${NC}"
-echo -e "${GREEN}Total Time: ${H}h ${M}m${NC}"
-echo -e "${GREEN}========================================${NC}"
