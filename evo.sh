@@ -44,58 +44,15 @@ git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr1 vendor/oneplus/sm6375-common
 git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375_austen.git -b sixteen-qpr1 kernel/oneplus/sm6375
 git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr1 hardware/oplus
-
 echo -e "${GREEN}✔ All downloads finished.${NC}"
-
-# ========================================================
-#  PHASE 3: NEUTRON SETUP (NO CCACHE!)
-# ========================================================
-echo -e "\n${BLUE}➜ [PHASE 4/5] Setting up Environment...${NC}"
-
-if [ ! -d "prebuilts/clang/host/linux-x86/neutron" ]; then
-    mkdir -p prebuilts/clang/host/linux-x86/neutron
-    cd prebuilts/clang/host/linux-x86/neutron
-    curl -LO "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman"
-    chmod +x antman
-    ./antman -S --legacy 
-    cd ../../../../../
-fi
-
-NEUTRON_PATH="$(pwd)/prebuilts/clang/host/linux-x86/neutron"
-export PATH="${NEUTRON_PATH}/bin:$PATH"
-export TARGET_KERNEL_CLANG_COMPILE=true
-export TARGET_KERNEL_CLANG_VERSION=neutron
-export TARGET_KERNEL_CLANG_PATH="${NEUTRON_PATH}"
-
-# 🛑 CCACHE REMOVED (Fixes Image 3 Error)
-
-# ========================================================
-#  PHASE 4: COMPILATION
-# ========================================================
 echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
-
 . build/envsetup.sh
-
+export LLVM_ENABLE_LTO=false
+export LLVM_USE_LINKER=lld
 # Using Lineage naming
 lunch lineage_larry-bp3a-userdebug
 
-# ========================================================
-#  🛑 NUCLEAR FIX (EXECUTE RIGHT BEFORE BUILD) 🛑
-# ========================================================
-# This is the most important part. We run this AFTER 'lunch'
-# to ensure the dangerous flags are gone forever.
-
 echo ">> Sanitizing Build Environment..."
-
-# 1. Force Server Tools to use GCC (Fixes Error 139)
-export HOSTCC=gcc
-export HOSTCXX=g++
-
-# 2. CLEAR FLAGS (Fixes 'Poisoned' linker flags)
-unset HOSTLDFLAGS
-unset LDFLAGS
-unset CLANG_LDFLAGS
-unset LD_LIBRARY_PATH
 
 # 3. Clean kernel objects to prevent using old broken files
 rm -rf out/target/product/larry/obj/KERNEL_OBJ
