@@ -8,29 +8,15 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# =========================================================
-#  PHASE 1: ENVIRONMENT SANITIZATION (Critical)
-# =========================================================
-unset LD_LIBRARY_PATH
-unset LD_PRELOAD
-unset PYTHONPATH
-unset CC
-unset CXX
-unset CFLAGS
-unset LDFLAGS
-export LC_ALL=C
-unset JAVA_HOME
-
-echo -e "${GREEN}✔ Environment Cleaned.${NC}"
-
 # ========================================================
-#  PHASE 2: CLEANUP & SYNC
+#  PHASE 1: CLEANUP & SYNC
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 1/5] Cleaning up old files...${NC}"
-# Delete the entire output folder to remove "poisoned" config files
+
+# 1. Delete output (CRITICAL to remove poisoned config)
 rm -rf out/
 
-# Delete trees to ensure a fresh start
+# 2. Delete trees to ensure fresh clones
 rm -rf device/oneplus/larry device/oneplus/sm6375-common
 rm -rf vendor/oneplus/larry vendor/oneplus/sm6375-common
 rm -rf kernel/oneplus/sm6375 hardware/oplus
@@ -43,7 +29,7 @@ repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 echo -e "${GREEN}✔ Sync Complete.${NC}"
 
 # ========================================================
-#  PHASE 3: CLONING SOURCES
+#  PHASE 2: CLONING SOURCES
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 3/5] Downloading Device Trees...${NC}"
 
@@ -51,7 +37,7 @@ echo -e "\n${BLUE}➜ [PHASE 3/5] Downloading Device Trees...${NC}"
 rm -rf vendor/evolution-priv/keys
 git clone https://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@github.com/DEMONTHUNDER/my-private-keys.git vendor/evolution-priv/keys || echo "⚠️ Keys failed! Using public keys."
 
-# Device & Vendor Trees
+# Device & Vendor Trees (Using 'evo-perf' and 'sixteen-qpr1' branches)
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b evo-perf device/oneplus/larry
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr1 device/oneplus/sm6375-common
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b sixteen-qpr1 vendor/oneplus/larry
@@ -62,7 +48,7 @@ git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-
 echo -e "${GREEN}✔ All downloads finished.${NC}"
 
 # ========================================================
-#  PHASE 4: NEUTRON SETUP (No CCACHE)
+#  PHASE 3: NEUTRON SETUP (NO CCACHE!)
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 4/5] Setting up Environment...${NC}"
 
@@ -81,35 +67,37 @@ export TARGET_KERNEL_CLANG_COMPILE=true
 export TARGET_KERNEL_CLANG_VERSION=neutron
 export TARGET_KERNEL_CLANG_PATH="${NEUTRON_PATH}"
 
-# 🛑 CCACHE REMOVED: It was causing the "not found" error.
+# 🛑 CCACHE REMOVED (Fixes Image 3 Error)
 
 # ========================================================
-#  PHASE 5: COMPILATION
+#  PHASE 4: COMPILATION
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
 
 . build/envsetup.sh
 
-# Using Lineage naming (as required)
+# Using Lineage naming
 lunch lineage_larry-bp3a-userdebug
 
 # ========================================================
-#  🛑 NUCLEAR FIX V2 (EXECUTE RIGHT BEFORE BUILD) 🛑
+#  🛑 NUCLEAR FIX (EXECUTE RIGHT BEFORE BUILD) 🛑
 # ========================================================
-echo "Applying final environment sanitizer..."
+# This is the most important part. We run this AFTER 'lunch'
+# to ensure the dangerous flags are gone forever.
 
-# 1. Force Server Tools to use GCC (Prevents Error 139)
+echo ">> Sanitizing Build Environment..."
+
+# 1. Force Server Tools to use GCC (Fixes Error 139)
 export HOSTCC=gcc
 export HOSTCXX=g++
 
-# 2. CLEAR FLAGS (This fixes the log seen in Image 1)
-# We unset these AGAIN here because 'lunch' might have added them back.
+# 2. CLEAR FLAGS (Fixes 'Poisoned' linker flags)
 unset HOSTLDFLAGS
 unset LDFLAGS
 unset CLANG_LDFLAGS
 unset LD_LIBRARY_PATH
 
-# 3. Double check cleanup
+# 3. Clean kernel objects to prevent using old broken files
 rm -rf out/target/product/larry/obj/KERNEL_OBJ
 # ========================================================
 
