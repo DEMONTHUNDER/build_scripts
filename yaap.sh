@@ -48,6 +48,45 @@ echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
 . build/envsetup.sh
 export LLVM_ENABLE_LTO=false
 export LLVM_USE_LINKER=lld
+
+# ============================================
+# YAAP CLEANUP: REMOVE LINEAGE HALS (AOSP ONLY)
+# ============================================
+
+echo ">> YAAP: Removing Lineage-specific HALs..."
+
+# Remove Lineage Touch HAL
+rm -rf hardware/oplus/aidl/touch
+
+# Remove Lineage LiveDisplay HAL
+rm -rf hardware/oplus/aidl/livedisplay
+
+# Remove Lineage init services (if present)
+rm -f device/oneplus/larry/init/vendor.lineage.touch-service.oplus.rc
+rm -f device/oneplus/larry/init/vendor.lineage.livedisplay*.rc
+
+# Clean device.mk from Lineage packages
+DEVICE_MK="device/oneplus/larry/device.mk"
+if [ -f "$DEVICE_MK" ]; then
+    sed -i '/vendor.lineage/d' "$DEVICE_MK"
+    sed -i '/OPLUS_LINEAGE/d' "$DEVICE_MK"
+fi
+
+# Clean BoardConfig files from Lineage flags
+for BC in \
+    device/oneplus/larry/BoardConfig.mk \
+    device/oneplus/sm6375-common/BoardConfigCommon.mk
+do
+    if [ -f "$BC" ]; then
+        sed -i '/OPLUS_LINEAGE/d' "$BC"
+        sed -i '/lineage/d' "$BC"
+    fi
+done
+
+echo ">> YAAP: Lineage HAL cleanup done"
+
+
+
 # Using Lineage naming
 lunch yaap_larry-user && m yaap
 
