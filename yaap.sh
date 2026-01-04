@@ -37,30 +37,19 @@ rm -rf vendor/evolution-priv/keys
 git clone https://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@github.com/DEMONTHUNDER/my-private-keys.git vendor/evolution-priv/keys || echo "⚠️ Keys failed! Using public keys."
 
 # Device & Vendor Trees (Using 'evo-perf' and 'sixteen-qpr1' branches)
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b evo-perf device/oneplus/larry
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b yaap device/oneplus/larry
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr1 device/oneplus/sm6375-common
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b sixteen-qpr1 vendor/oneplus/larry
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr1 vendor/oneplus/sm6375-common
 git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b sixteen-qpr1 kernel/oneplus/sm6375
-git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr1 hardware/oplus
+git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b lineage-23.2 hardware/oplus
 echo -e "${GREEN}✔ All downloads finished.${NC}"
 echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
 . build/envsetup.sh
 export LLVM_ENABLE_LTO=false
 export LLVM_USE_LINKER=lld
 # Using Lineage naming
-lunch lineage_larry-bp3a-userdebug
-
-echo ">> Sanitizing Build Environment..."
-
-# 3. Clean kernel objects to prevent using old broken files
-rm -rf out/target/product/larry/obj/KERNEL_OBJ
-# ========================================================
-
-echo "========================="
-echo "Starting ROM Compilation..."
-echo "========================="
-m evolution -j$(nproc --all)
+lunch yaap_larry-user && m yaap
 
 # ========================================================
 #  FINISHED
