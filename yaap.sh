@@ -17,6 +17,8 @@ echo -e "\n${BLUE}➜ [PHASE 1/5] Cleaning up old files...${NC}"
 rm -rf out/
 
 # 2. Delete trees to ensure fresh clones
+grep -R "vendor.lineage" .
+grep -R "livedisplay" hardware/oplus
 rm -rf device/oneplus/larry device/oneplus/sm6375-common
 rm -rf vendor/oneplus/larry vendor/oneplus/sm6375-common
 rm -rf kernel/oneplus/sm6375 hardware/oplus
@@ -61,30 +63,32 @@ rm -rf hardware/oplus/aidl/touch
 # Remove Lineage LiveDisplay HAL
 rm -rf hardware/oplus/aidl/livedisplay
 
-# Remove Lineage init services (if present)
+# Remove Lineage init services
 rm -f device/oneplus/larry/init/vendor.lineage.touch-service.oplus.rc
 rm -f device/oneplus/larry/init/vendor.lineage.livedisplay*.rc
 
-# Clean device.mk from Lineage packages
+# Clean device.mk
 DEVICE_MK="device/oneplus/larry/device.mk"
 if [ -f "$DEVICE_MK" ]; then
-    sed -i '/vendor.lineage/d' "$DEVICE_MK"
+    sed -i '/vendor\.lineage/d' "$DEVICE_MK"
     sed -i '/OPLUS_LINEAGE/d' "$DEVICE_MK"
 fi
 
-# Clean BoardConfig files from Lineage flags
+# Clean BoardConfig flags (SAFE)
 for BC in \
     device/oneplus/larry/BoardConfig.mk \
     device/oneplus/sm6375-common/BoardConfigCommon.mk
 do
     if [ -f "$BC" ]; then
         sed -i '/OPLUS_LINEAGE/d' "$BC"
-        sed -i '/lineage/d' "$BC"
+        sed -i '/vendor\.lineage/d' "$BC"
     fi
 done
 
-echo ">> YAAP: Lineage HAL cleanup done"
+# Clean Soong cache (IMPORTANT)
+rm -rf out/soong
 
+echo ">> YAAP: Lineage HAL cleanup done"
 
 
 # Using Lineage naming
