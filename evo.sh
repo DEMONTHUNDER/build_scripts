@@ -42,7 +42,7 @@ git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b ev
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr1 device/oneplus/sm6375-common
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b sixteen-qpr1 vendor/oneplus/larry
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr1 vendor/oneplus/sm6375-common
-git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375_austen.git -b sixteen-qpr1 kernel/oneplus/sm6375
+git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b sixteen-qpr1 kernel/oneplus/sm6375
 git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr1 hardware/oplus
 echo -e "${GREEN}✔ All downloads finished.${NC}"
 echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
