@@ -17,8 +17,6 @@ echo -e "\n${BLUE}➜ [PHASE 1/5] Cleaning up old files...${NC}"
 rm -rf out/
 
 # 2. Delete trees to ensure fresh clones
-grep -R "vendor.lineage" .
-grep -R "livedisplay" hardware/oplus
 rm -rf device/oneplus/larry device/oneplus/sm6375-common
 rm -rf vendor/oneplus/larry vendor/oneplus/sm6375-common
 rm -rf kernel/oneplus/sm6375 hardware/oplus
@@ -84,9 +82,6 @@ do
         sed -i '/vendor\.lineage/d' "$BC"
     fi
 done
-
-# Clean Soong cache (IMPORTANT)
-rm -rf out/soong
 
 echo ">> YAAP: Lineage HAL cleanup done"
 
