@@ -24,7 +24,7 @@ rm -rf .repo/local_manifests
 
 echo -e "\n${BLUE}➜ [PHASE 2/5] Syncing Repositories...${NC}"
 repo init -u https://github.com/The-Clover-Project/manifest.git -b 16-qpr1 --git-lfs
-repo sync -c --force-sync --optimized-fetch --no-tags --no-clone-bundle --prune -j$(nproc --all)
+/opt/crave/resync.sh
 echo -e "${GREEN}✔ Sync Complete.${NC}"
 
 # ========================================================
