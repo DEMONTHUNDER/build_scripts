@@ -23,7 +23,7 @@ rm -rf kernel/oneplus/sm6375 hardware/oplus
 rm -rf .repo/local_manifests
 
 echo -e "\n${BLUE}➜ [PHASE 2/5] Syncing Repositories...${NC}"
-repo init -u https://github.com/Evolution-X/manifest -b bq1 --git-lfs
+repo init -u https://github.com/The-Clover-Project/manifest.git -b 16-qpr1 --git-lfs
 repo sync -c --force-sync --optimized-fetch --no-tags --no-clone-bundle --prune -j$(nproc --all)
 echo -e "${GREEN}✔ Sync Complete.${NC}"
 
@@ -52,11 +52,6 @@ export LLVM_USE_LINKER=lld
 lunch clover_larry-bp3a-userdebug
 
 echo ">> Sanitizing Build Environment..."
-
-# 3. Clean kernel objects to prevent using old broken files
-rm -rf out/target/product/larry/obj/KERNEL_OBJ
-# ========================================================
-
 echo "========================="
 echo "Starting ROM Compilation..."
 echo "========================="
