@@ -57,6 +57,10 @@ echo ">> Sanitizing Build Environment..."
 # 3. Clean kernel objects to prevent using old broken files
 rm -rf out/target/product/larry/obj/KERNEL_OBJ
 # ========================================================
+# 2. THE CLEAN STEP (Crucial for your tweaks to work)
+# Use 'installclean' to save time, or 'clean' for total safety
+echo "Cleaning old images to apply new tweaks..."
+make installclean
 
 echo "========================="
 echo "Starting ROM Compilation..."
