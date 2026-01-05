@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # ========================================================
 #  SCRIPT CONFIGURATION
 # ========================================================
@@ -15,6 +16,8 @@ echo -e "\n${BLUE}➜ [PHASE 1/5] Cleaning up old files...${NC}"
 
 # 1. Delete output (CRITICAL to remove poisoned config)
 rm -rf out/
+rm -rf out/soong
+m clean
 
 # 2. Delete trees to ensure fresh clones
 rm -rf device/oneplus/larry device/oneplus/sm6375-common
@@ -54,6 +57,7 @@ export LLVM_USE_LINKER=lld
 # ============================================
 
 echo ">> YAAP: Removing Lineage-specific HALs..."
+grep -R "oplus-fwk" device/oneplus
 
 # Remove Lineage Touch HAL
 rm -rf hardware/oplus/aidl/touch
@@ -82,12 +86,17 @@ do
         sed -i '/vendor\.lineage/d' "$BC"
     fi
 done
+# Disable Oplus framework include (YAAP does not use it)
+SM6375_MK="device/oneplus/sm6375-common/sm6375.mk"
+if [ -f "$SM6375_MK" ]; then
+    sed -i '/oplus-fwk/d' "$SM6375_MK"
+fi
 
 echo ">> YAAP: Lineage HAL cleanup done"
 
 
 # Using Lineage naming
-lunch yaap_larry-user && m yaap
+lunch yaap_larry-bp4a-user && m yaap
 
 # ========================================================
 #  FINISHED
