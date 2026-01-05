@@ -24,8 +24,7 @@ rm -rf .repo/local_manifests
 
 echo -e "\n${BLUE}➜ [PHASE 2/5] Syncing Repositories...${NC}"
 repo init -u https://github.com/Evolution-X/manifest -b bq1 --git-lfs
-repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
-/opt/crave/resync.sh
+repo sync -c --force-sync --optimized-fetch --no-tags --no-clone-bundle --prune -j$(nproc --all)
 echo -e "${GREEN}✔ Sync Complete.${NC}"
 
 # ========================================================
@@ -38,7 +37,7 @@ rm -rf vendor/evolution-priv/keys
 git clone https://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@github.com/DEMONTHUNDER/my-private-keys.git vendor/evolution-priv/keys || echo "⚠️ Keys failed! Using public keys."
 
 # Device & Vendor Trees (Using 'evo-perf' and 'sixteen-qpr1' branches)
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b evo-perf device/oneplus/larry
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b clover device/oneplus/larry
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr1 device/oneplus/sm6375-common
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b sixteen-qpr1 vendor/oneplus/larry
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr1 vendor/oneplus/sm6375-common
@@ -50,7 +49,7 @@ echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
 export LLVM_ENABLE_LTO=false
 export LLVM_USE_LINKER=lld
 # Using Lineage naming
-lunch lineage_larry-bp3a-userdebug
+lunch clover_larry-bp3a-userdebug
 
 echo ">> Sanitizing Build Environment..."
 
@@ -61,7 +60,7 @@ rm -rf out/target/product/larry/obj/KERNEL_OBJ
 echo "========================="
 echo "Starting ROM Compilation..."
 echo "========================="
-m evolution -j$(nproc --all)
+mka clover -j$(nproc --all)
 
 # ========================================================
 #  FINISHED
