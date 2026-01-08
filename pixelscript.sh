@@ -22,6 +22,7 @@ rm -rf .repo/local_manifests
 
 echo -e "\n${BLUE}➜ [PHASE 2/5] Syncing Repositories...${NC}"
 repo init -u https://github.com/PixelOS-AOSP/android_manifest.git -b sixteen-qpr1 --git-lfs
+repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 /opt/crave/resync.sh
 echo -e "${GREEN}✔ Sync Complete.${NC}"
 
