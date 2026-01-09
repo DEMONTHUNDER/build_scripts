@@ -23,7 +23,7 @@ rm -rf kernel/oneplus/sm6375 hardware/oplus
 rm -rf .repo/local_manifests
 
 echo -e "\n${BLUE}➜ [PHASE 2/5] Syncing Repositories...${NC}"
-repo init -u https://github.com/Evolution-X/manifest -b bq2 --git-lfs
+repo init -u https://github.com/Evolution-X/manifest -b bq1 --git-lfs
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 /opt/crave/resync.sh
 echo -e "${GREEN}✔ Sync Complete.${NC}"
@@ -43,14 +43,14 @@ git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.g
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b sixteen-qpr1 vendor/oneplus/larry
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr1 vendor/oneplus/sm6375-common
 git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b sixteen-qpr1 kernel/oneplus/sm6375
-git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b lineage-23.2 hardware/oplus
+git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr1 hardware/oplus
 echo -e "${GREEN}✔ All downloads finished.${NC}"
 echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
 . build/envsetup.sh
 export LLVM_ENABLE_LTO=false
 export LLVM_USE_LINKER=lld
 # Using Lineage naming
-lunch lineage_larry-bp4a-userdebug
+lunch lineage_larry-bp3a-userdebug
 
 echo ">> Sanitizing Build Environment..."
 
