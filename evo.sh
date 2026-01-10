@@ -35,10 +35,6 @@ echo -e "${GREEN}✔ Sync Complete.${NC}"
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 3/5] Downloading Device Trees...${NC}"
 
-# Keys
-rm -rf vendor/evolution-priv/keys
-git clone https://github.com/DEMONTHUNDER/my-private-keys vendor/evolution-priv/keys || echo "⚠️ Keys failed! Using public keys."
-
 # Device & Vendor Trees (Using 'evo-perf' and 'sixteen-qpr1' branches)
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b evo-perf device/oneplus/larry
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr1 device/oneplus/sm6375-common
@@ -46,8 +42,17 @@ git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr1 vendor/oneplus/sm6375-common
 git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b sixteen-qpr1 kernel/oneplus/sm6375
 git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr1 hardware/oplus
+
+# Keys
+rm -rf vendor/evolution-priv/keys
+git clone https://github.com/DEMONTHUNDER/my-private-keys -b keys vendor/evolution-priv/keys || echo "⚠️ Keys failed! Using public keys."
+
 echo -e "${GREEN}✔ All downloads finished.${NC}"
 echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
+
+
+
+
 . build/envsetup.sh
 # Using Lineage naming
 lunch lineage_larry-bp3a-userdebug
