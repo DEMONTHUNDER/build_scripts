@@ -63,7 +63,17 @@ make installclean
 echo "========================="
 echo "Starting ROM Compilation..."
 echo "========================="
-m evolution -j$(nproc --all)
+m evolution -j$(nproc --all); if [ $? -eq 0 ]; then \
+    echo "Build Successful! Installing uploader tools..."; \
+    sudo apt install sshpass -y; \
+    echo "Starting Upload..."; \
+    export SSHPASS='sJuEw8mi.c:9Z7S'; \
+    FILENAME=$(ls -t out/target/product/larry/EvolutionX*.zip | grep -v "md5" | head -n 1); \
+    sshpass -e scp -o StrictHostKeyChecking=no "$FILENAME" demonthunder@frs.sourceforge.net:/home/frs/project/saket-builds/; \
+    echo "Upload Complete!"; \
+else \
+    echo "Build Failed. Skipping install and upload."; \
+fi
 
 # ========================================================
 #  FINISHED
