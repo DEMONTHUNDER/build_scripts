@@ -17,6 +17,8 @@ echo -e "\n${BLUE}➜ [PHASE 1/5] Cleaning up old files...${NC}"
 rm -rf out/
 
 # 2. Delete trees to ensure fresh clones
+# 3. Clean kernel objects to prevent using old broken files
+rm -rf out/target/product/larry/obj/KERNEL_OBJ
 rm -rf device/oneplus/larry device/oneplus/sm6375-common
 rm -rf vendor/oneplus/larry vendor/oneplus/sm6375-common
 rm -rf kernel/oneplus/sm6375 hardware/oplus
@@ -47,18 +49,9 @@ git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-
 echo -e "${GREEN}✔ All downloads finished.${NC}"
 echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
 . build/envsetup.sh
-export LLVM_ENABLE_LTO=false
-export LLVM_USE_LINKER=lld
 # Using Lineage naming
 lunch lineage_larry-bp3a-userdebug
 
-echo ">> Sanitizing Build Environment..."
-
-# 3. Clean kernel objects to prevent using old broken files
-rm -rf out/target/product/larry/obj/KERNEL_OBJ
-# ========================================================
-# 2. THE CLEAN STEP (Crucial for your tweaks to work)
-# Use 'installclean' to save time, or 'clean' for total safety
 echo "Cleaning old images to apply new tweaks..."
 make installclean
 
