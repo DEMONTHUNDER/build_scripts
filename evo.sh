@@ -35,7 +35,7 @@ echo -e "\n${BLUE}➜ [PHASE 3/5] Downloading Device Trees...${NC}"
 
 # Keys
 rm -rf vendor/evolution-priv/keys
-git clone https://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@github.com/DEMONTHUNDER/my-private-keys.git vendor/evolution-priv/keys || echo "⚠️ Keys failed! Using public keys."
+git clone https://github.com/DEMONTHUNDER/my-private-keys vendor/evolution-priv/keys || echo "⚠️ Keys failed! Using public keys."
 
 # Device & Vendor Trees (Using 'evo-perf' and 'sixteen-qpr1' branches)
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b evo-perf device/oneplus/larry
