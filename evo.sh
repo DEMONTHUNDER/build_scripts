@@ -25,7 +25,7 @@ rm -rf kernel/oneplus/sm6375 hardware/oplus
 rm -rf .repo/local_manifests
 
 echo -e "\n${BLUE}➜ [PHASE 2/5] Syncing Repositories...${NC}"
-repo init -u https://github.com/Evolution-X/manifest -b bq1 --git-lfs
+repo init -u https://github.com/Evolution-X/manifest -b bq2 --git-lfs
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 /opt/crave/resync.sh
 echo -e "${GREEN}✔ Sync Complete.${NC}"
@@ -36,12 +36,12 @@ echo -e "${GREEN}✔ Sync Complete.${NC}"
 echo -e "\n${BLUE}➜ [PHASE 3/5] Downloading Device Trees...${NC}"
 
 # Device & Vendor Trees (Using 'evo-perf' and 'sixteen-qpr1' branches)
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b evo-perf device/oneplus/larry
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr1 device/oneplus/sm6375-common
-git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b sixteen-qpr1 vendor/oneplus/larry
-git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr1 vendor/oneplus/sm6375-common
-git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b sixteen-qpr1 kernel/oneplus/sm6375
-git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr1 hardware/oplus
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b evo device/oneplus/larry
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr2 device/oneplus/sm6375-common
+git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b sixteen-qpr2 vendor/oneplus/larry
+git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr2 vendor/oneplus/sm6375-common
+git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b sixteen-qpr2 kernel/oneplus/sm6375
+git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr2 hardware/oplus
 
 # Keys
 rm -rf vendor/evolution-priv/keys
@@ -55,7 +55,7 @@ echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
 
 . build/envsetup.sh
 # Using Lineage naming
-lunch lineage_larry-bp3a-userdebug
+lunch lineage_larry-bp4a-userdebug
 
 echo "Cleaning old images to apply new tweaks..."
 make installclean
