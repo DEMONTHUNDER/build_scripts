@@ -48,7 +48,7 @@ export KBUILD_BUILD_USER="DemonThunder"
 export KBUILD_BUILD_HOST="Crave-Build"
 export BUILD_USERNAME="DemonThunder"
 export BUILD_HOSTNAME="Crave-Build"
-export TARGET_BUILD_VARIANT=userdebug
+export TARGET_BUILD_VARIANT=user
 
 . build/envsetup.sh
 
