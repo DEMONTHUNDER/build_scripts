@@ -25,7 +25,7 @@ rm -rf kernel/oneplus/sm6375 hardware/oplus
 rm -rf .repo/local_manifests
 
 echo -e "\n${BLUE}➜ [PHASE 2/5] Syncing Repositories...${NC}"
-repo init -u https://github.com/Evolution-X/manifest -b bq2 --git-lfs
+repo init -u https://github.com/RisingOS-Revived/android -b seventeen --git-lfs
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
 /opt/crave/resync.sh
 echo -e "${GREEN}✔ Sync Complete.${NC}"
@@ -35,7 +35,7 @@ echo -e "${GREEN}✔ Sync Complete.${NC}"
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 3/5] Downloading Device Trees...${NC}"
 
-# Device & Vendor Trees (Using 'evo-perf' and 'sixteen-qpr1' branches)
+# Device & Vendor Trees (Using 'evo-perf' and 'sixteen-qpr2' branches)
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b sixteen-qpr2 device/oneplus/larry
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr2 device/oneplus/sm6375-common
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b sixteen-qpr2 vendor/oneplus/larry
