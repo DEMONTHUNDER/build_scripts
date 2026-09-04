@@ -1,85 +1,104 @@
 #!/bin/bash
 
 # ========================================================
-#  SCRIPT CONFIGURATION
+#  PHASE 1: NUCLEAR CLEANUP
 # ========================================================
-START_TIME=$(date +%s)
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+echo "➜ Cleaning up old environment..."
 
-# ========================================================
-#  PHASE 1: CLEANUP & SYNC
-# ========================================================
-echo -e "\n${BLUE}➜ [PHASE 1/5] Cleaning up old files...${NC}"
-
-# 1. Delete output (CRITICAL to remove poisoned config)
+# Delete output and trees to prevent poisoned caches and git conflicts
 rm -rf out/
-
-# 2. Delete trees to ensure fresh clones
-# 3. Clean kernel objects to prevent using old broken files
 rm -rf out/target/product/larry/obj/KERNEL_OBJ
 rm -rf device/oneplus/larry device/oneplus/sm6375-common
 rm -rf vendor/oneplus/larry vendor/oneplus/sm6375-common
 rm -rf kernel/oneplus/sm6375 hardware/oplus
 rm -rf .repo/local_manifests
 
-echo -e "\n${BLUE}➜ [PHASE 2/5] Syncing Repositories...${NC}"
-repo init -u https://github.com/RisingOS-Revived/android -b seventeen --git-lfs
-repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
+# ========================================================
+#  PHASE 2: HIGH-EFFICIENCY SYNC
+# ========================================================
+echo "➜ Syncing RisingOS Source..."
+
+# Using --depth=1 saves bandwidth. We only need the latest commit.
+repo init -u https://github.com/RisingOS-Revived/android -b seventeen --git-lfs --depth=1
+
+# Aggressive sync: forces sync, skips clone bundles, optimized fetch
+repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags --optimized-fetch --prune
 /opt/crave/resync.sh
-echo -e "${GREEN}✔ Sync Complete.${NC}"
+
+echo "✔ Source Sync Complete."
 
 # ========================================================
-#  PHASE 2: CLONING SOURCES
+#  PHASE 3: FAST DEVICE TREE CLONING
 # ========================================================
-echo -e "\n${BLUE}➜ [PHASE 3/5] Downloading Device Trees...${NC}"
+echo "➜ Downloading Device Trees..."
 
-# Device & Vendor Trees (Using 'evo-perf' and 'sixteen-qpr2' branches)
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b sixteen-qpr2 device/oneplus/larry
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr2 device/oneplus/sm6375-common
-git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b sixteen-qpr2 vendor/oneplus/larry
-git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr2 vendor/oneplus/sm6375-common
-git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b sixteen-qpr2 kernel/oneplus/sm6375
-git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr2 hardware/oplus
+# --depth=1 slashes download times from minutes to seconds
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b sixteen-qpr2 device/oneplus/larry --depth=1
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr2 device/oneplus/sm6375-common --depth=1
+git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b sixteen-qpr2 vendor/oneplus/larry --depth=1
+git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr2 vendor/oneplus/sm6375-common --depth=1
+git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b sixteen-qpr2 kernel/oneplus/sm6375 --depth=1
+git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr2 hardware/oplus --depth=1
 
-# Keys
-rm -rf vendor/evolution-priv/keys
-git clone https://github.com/DEMONTHUNDER/my-private-keys -b keys vendor/evolution-priv/keys || echo "⚠️ Keys failed! Using public keys."
+echo "✔ Trees successfully cloned."
 
-echo -e "${GREEN}✔ All downloads finished.${NC}"
-echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Build...${NC}"
+# ========================================================
+#  PHASE 4: CCACHE SAFEGUARD & CONFIG
+# ========================================================
+echo "➜ Configuring Ccache..."
 
-
-
-
-. build/envsetup.sh
-# Using Lineage naming
-lunch lineage_larry-bp4a-userdebug
-
-echo "Cleaning old images to apply new tweaks..."
-make installclean
-
-echo "========================="
-echo "Starting ROM Compilation..."
-echo "========================="
-m evolution -j$(nproc --all); if [ $? -eq 0 ]; then \
-    echo "Build Successful! Installing uploader tools..."; \
-    sudo apt install sshpass -y; \
-    echo "Starting Upload..."; \
-    export SSHPASS='sJuEw8mi.c:9Z7S'; \
-    FILENAME=$(ls -t out/target/product/larry/EvolutionX*.zip | grep -v "md5" | head -n 1); \
-    sshpass -e scp -o StrictHostKeyChecking=no "$FILENAME" demonthunder@frs.sourceforge.net:/home/frs/project/saket-builds/; \
-    echo "Upload Complete!"; \
-else \
-    echo "Build Failed. Skipping install and upload."; \
+# Safe check: Only use ccache if the binary actually exists and is executable
+if command -v ccache >/dev/null 2>&1; then
+    export USE_CCACHE=1
+    export CCACHE_EXEC=$(which ccache)
+    export CCACHE_COMPRESS=1
+    export CCACHE_MAXSIZE=50G
+    ccache -M 50G
+    echo "✔ Ccache enabled and configured."
+else
+    export USE_CCACHE=0
+    echo "⚠️ Ccache not found or broken. Safely falling back to a standard build."
 fi
 
 # ========================================================
-#  FINISHED
+#  PHASE 5: SAFE BUILD & OPTIMIZATIONS
 # ========================================================
-END_TIME=$(date +%s)
-ELAPSED=$((END_TIME - START_TIME))
-H=$((ELAPSED / 3600))
+echo "➜ Applying Tweaks & Starting Build..."
+
+export KBUILD_BUILD_USER="DemonThunder"
+export KBUILD_BUILD_HOST="Crave-Build"
+export BUILD_USERNAME="DemonThunder"
+export BUILD_HOSTNAME="Crave-Build"
+
+# Full GApps configuration for RisingOS
+export WITH_GMS=true
+export TARGET_BUILD_VARIANT=userdebug
+
+# Initialize the build environment
+. build/envsetup.sh
+
+# RisingOS wrapper targets your device
+riseup larry userdebug
+
+echo "========================================="
+echo "  Starting RisingOS Compilation (Full GApps)"
+echo "========================================="
+
+# 'rise b' executes the build using all available Crave cores
+rise b
+
+# Clean exit logic without uploads
+if [ $? -eq 0 ]; then
+    echo "✔ Build Successful! Locating output..."
+    FILENAME=$(ls -t out/target/product/larry/RisingOS*.zip | grep -v "md5" | head -n 1)
+    
+    if [ -f "$FILENAME" ]; then
+        echo "✔ ROM compiled successfully! You can find it at: $FILENAME"
+    else
+        echo "❌ Build finished but ZIP file was not found in the output directory."
+    fi
+else
+    echo "❌ Build Failed. Please check the error logs above."
+fi
 M=$(( (ELAPSED % 3600) / 60 ))
 echo -e "\n${GREEN}✔ Build Completed in ${H}h ${M}m${NC}"
