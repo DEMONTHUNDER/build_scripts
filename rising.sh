@@ -55,6 +55,10 @@ export TARGET_BUILD_VARIANT=user
 # Commands verified against official RisingOS docs
 riseup larry userdebug
 
+# Generate release keys to replace testkey (matches Rising documentation)
+echo "➜ Generating release keys for Play Integrity..."
+gk -s
+
 echo "========================================="
 echo "  Starting RisingOS Compilation"
 echo "========================================="
