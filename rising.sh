@@ -30,7 +30,7 @@ echo "✔ Source Sync Complete."
 # ========================================================
 echo "➜ Downloading Device Trees..."
 
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b sixteen-qpr2 device/oneplus/larry --depth=1
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b rising device/oneplus/larry --depth=1
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr2 device/oneplus/sm6375-common --depth=1
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b sixteen-qpr2 vendor/oneplus/larry --depth=1
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr2 vendor/oneplus/sm6375-common --depth=1
