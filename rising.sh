@@ -28,21 +28,9 @@ git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-
 
 echo "✔ Trees successfully cloned."
 
-# ========================================================
-#  PHASE 4: ENVIRONMENT & BUILD
-# ========================================================
-echo "➜ Applying Tweaks & Starting Build..."
-
-export KBUILD_BUILD_USER="DemonThunder"
-export KBUILD_BUILD_HOST="Crave-Build"
-export BUILD_USERNAME="DemonThunder"
-export BUILD_HOSTNAME="Crave-Build"
-export TARGET_BUILD_VARIANT=user
 
 . build/envsetup.sh
 
-# Commands verified against official RisingOS docs
-riseup larry userdebug
 
 # Generate release keys to replace testkey (matches Rising documentation)
 echo "➜ Generating release keys for Play Integrity..."
@@ -51,7 +39,8 @@ gk -s
 echo "========================================="
 echo "  Starting RisingOS Compilation"
 echo "========================================="
-
+# Commands verified against official RisingOS docs
+riseup larry user
 rise b
 
 if [ $? -eq 0 ]; then
