@@ -31,6 +31,8 @@ echo "✔ Trees successfully cloned."
 
 . build/envsetup.sh
 
+# Commands verified against official RisingOS docs
+riseup larry user
 
 # Generate release keys to replace testkey (matches Rising documentation)
 echo "➜ Generating release keys for Play Integrity..."
@@ -39,8 +41,7 @@ gk -s
 echo "========================================="
 echo "  Starting RisingOS Compilation"
 echo "========================================="
-# Commands verified against official RisingOS docs
-riseup larry user
+
 rise b
 
 if [ $? -eq 0 ]; then
