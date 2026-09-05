@@ -14,6 +14,11 @@ repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags --optimiz
 
 echo "✔ Source Sync Complete."
 
+
+# Clean existing trees to ensure updated clones
+rm -rf device/oneplus/larry device/oneplus/sm6375-common
+rm -rf vendor/oneplus/larry vendor/oneplus/sm6375-common
+rm -rf kernel/oneplus/sm6375 hardware/oplus
 # ========================================================
 #  PHASE 3: FAST DEVICE TREE CLONING
 # ========================================================
