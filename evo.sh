@@ -13,16 +13,7 @@ NC='\033[0m'
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 1/5] Cleaning up old files...${NC}"
 
-# 1. Delete output (CRITICAL to remove poisoned config)
-rm -rf out/
 
-# 2. Delete trees to ensure fresh clones
-# 3. Clean kernel objects to prevent using old broken files
-rm -rf out/target/product/larry/obj/KERNEL_OBJ
-rm -rf device/oneplus/larry device/oneplus/sm6375-common
-rm -rf vendor/oneplus/larry vendor/oneplus/sm6375-common
-rm -rf kernel/oneplus/sm6375 hardware/oplus
-rm -rf .repo/local_manifests
 
 echo -e "\n${BLUE}➜ [PHASE 2/5] Syncing Repositories...${NC}"
 repo init -u https://github.com/Evolution-X/manifest -b bq2 --git-lfs
