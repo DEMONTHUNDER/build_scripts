@@ -55,7 +55,7 @@ cp -rf "$WORKSPACE/susfs4ksu/kernel_patches/fs"/* fs/
 cp -rf "$WORKSPACE/susfs4ksu/kernel_patches/include/linux"/* include/linux/
 
 if ! grep -q "CONFIG_KSU_SUSFS" fs/Makefile 2>/dev/null; then
-    patch -p1 --forward < "$WORKSPACE/susfs4ksu/kernel_patches/50_add_susfs_in_kernel-5.4.patch" || true
+    patch -p1 --forward --batch < "$WORKSPACE/susfs4ksu/kernel_patches/50_add_susfs_in_kernel-5.4.patch" || true
 fi
 
 # ========================================================
