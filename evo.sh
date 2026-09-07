@@ -44,6 +44,10 @@ git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-
 
 echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
 
+# Remove lineage.dependencies so roomservice does not clash with your clones
+rm -f device/oneplus/larry/lineage.dependencies
+rm -f device/oneplus/sm6375-common/lineage.dependencies
+
 # ========================================================
 #  PHASE 4: ENVIRONMENT & BUILD
 # ========================================================
