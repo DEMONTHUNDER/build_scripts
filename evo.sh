@@ -24,7 +24,7 @@ rm -rf kernel/oneplus/sm6375 hardware/oplus
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 2/4] Syncing Evolution X Repositories...${NC}"
 
-repo init -u https://github.com/Evolution-X/manifest -b bq2 --git-lfs --depth=1
+repo init -u https://github.com/Evolution-X/manifest -b bka --git-lfs --depth=1
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags --optimized-fetch --prune
 /opt/crave/resync.sh
 
@@ -48,8 +48,6 @@ echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
 #  PHASE 4: ENVIRONMENT & BUILD
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 4/4] Setting up environment & starting compilation...${NC}"
-
-
 
 . build/envsetup.sh
 
