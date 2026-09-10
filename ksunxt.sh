@@ -1,74 +1,90 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 # ========================================================
-#  CONFIGURATION & DIRECTORIES
+#  1. WORKSPACE & DEPENDENCIES
 # ========================================================
 START_TIME=$(date +%s)
-WORKSPACE="$HOME/kernel-workspace"
-CLANG_DIR="$WORKSPACE/clang-llvm"
-KERNEL_DIR="$WORKSPACE/kernel"
+WORKSPACE="$HOME/kernel_workspace"
+CLANG_DIR="$WORKSPACE/toolchains/clang-aosp"
+KERNEL_DIR="$WORKSPACE/sm6375_kernel"
 ANYKERNEL_DIR="$WORKSPACE/AnyKernel3"
 
-echo "➜ [1/7] Checking dependencies..."
+# Set your A17 branch name here (e.g., 'seventeen', 'a17', or 'android-17')
+A17_BRANCH="seventeen" 
+
+echo "➜ Checking CachyOS dependencies..."
 if command -v pacman &> /dev/null; then
-    sudo pacman -Sy --needed --noconfirm git bc bison flex make gcc perl zip tar wget libelf openssl aarch64-linux-gnu-gcc
+    sudo pacman -S --needed --noconfirm git base-devel bc bison flex ccache \
+        gcc perl zip tar wget libelf openssl aarch64-linux-gnu-gcc arm-none-eabi-gcc
 fi
 
-mkdir -p "$WORKSPACE" && cd "$WORKSPACE"
+mkdir -p "$WORKSPACE/toolchains" && cd "$WORKSPACE"
 
 # ========================================================
-#  TOOLCHAIN SETUP (Clang r487747c)
+#  2. TOOLCHAIN FETCH (AOSP Clang)
 # ========================================================
-echo "➜ [2/7] Fetching prebuilt Clang toolchain..."
+echo "➜ Fetching AOSP Clang..."
 if [ ! -d "$CLANG_DIR" ]; then
     git clone --depth=1 https://gitlab.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r487747c.git "$CLANG_DIR"
 fi
 
 # ========================================================
-#  KERNEL SOURCE SETUP
+#  3. KERNEL SOURCE (A17 Trees)
 # ========================================================
-echo "➜ [3/7] Fetching SM6375 tree..."
+echo "➜ Fetching OnePlus SM6375 A17 Tree..."
 if [ ! -d "$KERNEL_DIR" ]; then
-    git clone --depth=1 https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b sixteen-qpr2 "$KERNEL_DIR"
+    git clone --depth=1 https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b "$A17_BRANCH" "$KERNEL_DIR"
 fi
 
 cd "$KERNEL_DIR"
 
 # ========================================================
-#  INTEGRATE KERNELSU-NEXT (Built-in Mode)
+#  4. KERNELSU-NEXT (v3.3.0) & SUSFS (Latest 2.2.x capabilities)
 # ========================================================
-echo "➜ [4/7] Setting up KernelSU-Next..."
+echo "➜ Fetching KernelSU-Next v3.3.0..."
 if [ ! -d "drivers/kernelsu" ]; then
-    curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s next
+    # Hardcoding the v3.3.0 tag for both the script source and the checkout target
+    curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/v3.3.0/kernel/setup.sh" | bash -s v3.3.0
 fi
 
-# ========================================================
-#  INTEGRATE SUSFS (5.4 Branch)
-# ========================================================
-echo "➜ [5/7] Integrating SuSFS for 5.4-qgki..."
+echo "➜ Fetching SuSFS for 5.4..."
 if [ ! -d "$WORKSPACE/susfs4ksu" ]; then
-    git clone -b kernel-5.4 https://gitlab.com/simonpunk/susfs4ksu.git "$WORKSPACE/susfs4ksu"
+    # The kernel-5.4 branch contains the structural patches needed for 5.4, updated for newer SuSFS versions
+    git clone --depth=1 -b kernel-5.4 https://gitlab.com/simonpunk/susfs4ksu.git "$WORKSPACE/susfs4ksu"
 fi
 
-cp -rf "$WORKSPACE/susfs4ksu/kernel_patches/fs"/* fs/
-cp -rf "$WORKSPACE/susfs4ksu/kernel_patches/include/linux"/* include/linux/
+# ========================================================
+#  5. THE INTEGRATION (Kernel + KSU Patching)
+# ========================================================
+echo "➜ Applying SuSFS patches..."
+
+cp -f "$WORKSPACE/susfs4ksu/kernel_patches/fs/susfs.c" fs/
+cp -f "$WORKSPACE/susfs4ksu/kernel_patches/include/linux/susfs.h" include/linux/
+cp -f "$WORKSPACE/susfs4ksu/kernel_patches/include/linux/sus_su.h" include/linux/ 2>/dev/null || true
 
 if ! grep -q "CONFIG_KSU_SUSFS" fs/Makefile 2>/dev/null; then
     patch -p1 --forward --batch < "$WORKSPACE/susfs4ksu/kernel_patches/50_add_susfs_in_kernel-5.4.patch" || true
 fi
 
-# ========================================================
-#  INJECT DEFCONFIG (KSU + SUSFS + LOW-LATENCY BOOST)
-# ========================================================
-echo "➜ [6/7] Injecting configs into holi-qgki_defconfig..."
-DEFCONFIG="arch/arm64/configs/vendor/holi-qgki_defconfig"
+# Patch KernelSU-Next directly
+cp -f "$WORKSPACE/susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch" drivers/kernelsu/
+cd drivers/kernelsu
+if [ -f "10_enable_susfs_for_ksu.patch" ] && ! grep -q "susfs" ksu.c 2>/dev/null; then
+    patch -p1 --forward --batch < 10_enable_susfs_for_ksu.patch || true
+fi
+cd "$KERNEL_DIR"
 
-# Strip duplicate old flags if re-running
-sed -i '/CONFIG_KSU/d' "$DEFCONFIG"
-sed -i '/CONFIG_PREEMPT/d' "$DEFCONFIG"
+# ========================================================
+#  6. DEFCONFIG INJECTION (Privacy + Performance)
+# ========================================================
+echo "➜ Injecting tweaks into defconfig..."
+DEFCONFIG_FILE="arch/arm64/configs/vendor/holi-qgki_defconfig"
 
-cat << 'EOF' >> "$DEFCONFIG"
+sed -i '/CONFIG_KSU/d' "$DEFCONFIG_FILE"
+sed -i '/CONFIG_AUDIT/d' "$DEFCONFIG_FILE"
+
+cat << 'EOF' >> "$DEFCONFIG_FILE"
 
 # --- KernelSU-Next & SuSFS ---
 CONFIG_KSU=y
@@ -85,11 +101,17 @@ CONFIG_KSU_SUSFS_SUS_KSTAT=y
 CONFIG_KSU_SUSFS_SUS_OVERLAYFS=y
 CONFIG_KSU_SUSFS_TRY_UMOUNT=y
 CONFIG_KSU_SUSFS_SPOOF_UNAME=y
-CONFIG_KSU_SUSFS_ENABLE_LOG=n
 CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y
+CONFIG_KSU_SUSFS_ENABLE_LOG=n
+
+# --- Anti-Detection & Privacy ---
+# CONFIG_AUDIT is not set
+# CONFIG_KALLSYMS_ALL is not set
+# CONFIG_FTRACE is not set
 
 # --- Performance & Low Latency ---
 CONFIG_PREEMPT=y
+CONFIG_HZ_300=y
 CONFIG_TCP_CONG_BBR=y
 CONFIG_DEFAULT_TCP_CONG="bbr"
 CONFIG_NET_SCH_FQ=y
@@ -99,18 +121,17 @@ CONFIG_ZRAM_WRITEBACK=y
 EOF
 
 # ========================================================
-#  COMPILATION (6 Threads for smooth Hyprland multitasking)
+#  7. COMPILATION
 # ========================================================
-echo "➜ [7/7] Compiling Kernel..."
+echo "➜ Building the Kernel..."
 export PATH="$CLANG_DIR/bin:$PATH"
-export ARCH=arm64
-export SUBARCH=arm64
-export KBUILD_BUILD_USER="DemonThunder"
-export KBUILD_BUILD_HOST="Cosmic"
+THREADS=$(( $(nproc --all) - 2 )) 
 
 make O=out clean
 make O=out holi-qgki_defconfig
-make O=out -j6 \
+make O=out -j"$THREADS" \
+    ARCH=arm64 \
+    SUBARCH=arm64 \
     CC=clang \
     LD=ld.lld \
     AR=llvm-ar \
@@ -119,45 +140,36 @@ make O=out -j6 \
     OBJDUMP=llvm-objdump \
     STRIP=llvm-strip \
     CROSS_COMPILE=aarch64-linux-gnu- \
-    LLVM=1 \
-    LLVM_IAS=1
+    CROSS_COMPILE_COMPAT=arm-none-eabi- \
+    LLVM=1
 
 # ========================================================
-#  ANYKERNEL3 PACKAGING
+#  8. ANYKERNEL3 PACKAGING
 # ========================================================
 cd "$WORKSPACE"
-if [ -f "$KERNEL_DIR/out/arch/arm64/boot/Image.gz" ] || [ -f "$KERNEL_DIR/out/arch/arm64/boot/Image" ]; then
-    echo "✔ Kernel compiled successfully. Packaging AnyKernel3 ZIP..."
+IMAGE_GZ="$KERNEL_DIR/out/arch/arm64/boot/Image.gz"
+
+if [ -f "$IMAGE_GZ" ]; then
+    echo "✔ Kernel compiled. Packaging AnyKernel3..."
     rm -rf "$ANYKERNEL_DIR"
-    git clone https://github.com/osm0sis/AnyKernel3.git "$ANYKERNEL_DIR"
+    git clone --depth=1 https://github.com/osm0sis/AnyKernel3.git "$ANYKERNEL_DIR"
     
-    # Configure AnyKernel3 for Larry
+    # Configure for OnePlus Nord CE 3 Lite (larry)
     sed -i 's/device.name1=.*/device.name1=larry/g' "$ANYKERNEL_DIR/anykernel.sh"
-    sed -i 's/block=.*/block=auto/g' "$ANYKERNEL_DIR/anykernel.sh"
+    sed -i 's/block=.*/block=by-name\/boot/g' "$ANYKERNEL_DIR/anykernel.sh"
     sed -i 's/is_slot_device=0/is_slot_device=1/g' "$ANYKERNEL_DIR/anykernel.sh"
 
-    if [ -f "$KERNEL_DIR/out/arch/arm64/boot/Image.gz" ]; then
-        cp "$KERNEL_DIR/out/arch/arm64/boot/Image.gz" "$ANYKERNEL_DIR/"
-    else
-        cp "$KERNEL_DIR/out/arch/arm64/boot/Image" "$ANYKERNEL_DIR/"
-    fi
-
-    # Include DTB if built
-    if [ -f "$KERNEL_DIR/out/arch/arm64/boot/dtb.img" ]; then
-        cp "$KERNEL_DIR/out/arch/arm64/boot/dtb.img" "$ANYKERNEL_DIR/dtb"
-    elif [ -f "$KERNEL_DIR/out/arch/arm64/boot/dtb" ]; then
-        cp "$KERNEL_DIR/out/arch/arm64/boot/dtb" "$ANYKERNEL_DIR/dtb"
-    fi
+    cp "$IMAGE_GZ" "$ANYKERNEL_DIR/"
 
     cd "$ANYKERNEL_DIR"
-    zip -r9 "$WORKSPACE/KSU-Next-Susfs-Larry.zip" * -x .git README.md *placeholder
+    zip -r9 "$WORKSPACE/Larry-A17-KSUNext3.3-SuSFS2.2.zip" * -x .git README.md *placeholder
     
     ELAPSED=$(( $(date +%s) - START_TIME ))
     echo -e "\n============================================="
     echo "✔ SUCCESS in $((ELAPSED / 60))m $((ELAPSED % 60))s!"
-    echo "Flashable ZIP: $WORKSPACE/KSU-Next-Susfs-Larry.zip"
+    echo "Flashable ZIP: $WORKSPACE/Larry-A17-KSUNext3.3-SuSFS2.2.zip"
     echo "============================================="
 else
-    echo "❌ Build failed. Check terminal error log."
+    echo "❌ Build failed. Check the logs above."
     exit 1
 fi
