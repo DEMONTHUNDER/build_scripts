@@ -34,12 +34,12 @@ echo -e "${GREEN}✔ Sync Complete.${NC}"
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 3/4] Downloading Device Trees...${NC}"
 
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b sixteen-qpr2 device/oneplus/larry --depth=1
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr2 device/oneplus/sm6375-common --depth=1
-git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b sixteen-qpr2 vendor/oneplus/larry --depth=1
-git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b sixteen-qpr2 vendor/oneplus/sm6375-common --depth=1
-git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b sixteen-qpr2 kernel/oneplus/sm6375 --depth=1
-git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr2 hardware/oplus --depth=1
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b rising device/oneplus/larry --depth=1
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b a17 device/oneplus/sm6375-common --depth=1
+git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b lineage-23.2 vendor/oneplus/larry --depth=1
+git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b lineage-23.2 vendor/oneplus/sm6375-common --depth=1
+git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b lineage-23.2 kernel/oneplus/sm6375 --depth=1
+git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git  -b a17 hardware/oplus --depth=1
 
 echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
 
