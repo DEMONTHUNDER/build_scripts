@@ -30,11 +30,11 @@ rm -rf .repo/local_manifests
 # ========================================================
 echo "➜ Downloading Device Trees..."
 
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b rising device/oneplus/larry --depth=1
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b a17 device/oneplus/larry --depth=1
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b a17 device/oneplus/sm6375-common --depth=1
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b lineage-23.2 vendor/oneplus/larry --depth=1
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b lineage-23.2 vendor/oneplus/sm6375-common --depth=1
-git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b lineage-23.2 kernel/oneplus/sm6375 --depth=1
+git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b a17 kernel/oneplus/sm6375 --depth=1
 git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git  -b a17 hardware/oplus --depth=1
 
 echo "✔ Trees successfully cloned."
