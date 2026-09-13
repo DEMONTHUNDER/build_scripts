@@ -18,7 +18,7 @@ echo "✔ Source Sync Complete."
 #  PHASE 3: CLEAN & CLONE DEVICE TREES
 # ========================================================
 echo "➜ Cleaning and downloading device trees..."
-rm -rf out/soong
+
 rm -rf device/oneplus/larry device/oneplus/sm6375-common
 rm -rf vendor/oneplus/larry vendor/oneplus/sm6375-common
 rm -rf kernel/oneplus/sm6375 hardware/oplus
