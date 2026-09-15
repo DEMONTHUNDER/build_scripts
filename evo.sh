@@ -41,37 +41,40 @@ git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b l
 git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr2 hardware/oplus --depth=1
 echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
 
+
+
 # ========================================================
-#  PHASE 5: ENVIRONMENT & BUILDS
+# PHASE 4: ENVIRONMENT & VANILLA BUILD
 # ========================================================
-echo -e "\n${BLUE}➜ [PHASE 5/5] Setting up build environment...${NC}"
+echo -e "\n${BLUE}➜ [PHASE 4/5] Starting Evolution X (Vanilla Build)...${NC}"
 . build/envsetup.sh
 
-# --- BUILD 1: VANILLA ---
-echo "========================================="
-echo "  Starting Evolution X (Vanilla Build)"
-echo "========================================="
 export WITH_GMS=false
 lunch lineage_larry-bp4a-userdebug
 make installclean
 m evolution -j$(nproc --all)
 
-# Move or rename the output zip so it doesn't get overwritten
-mkdir -p out/artifacts
-mv out/target/product/larry/EvolutionX*.zip out/artifacts/ 2>/dev/null || true
+# Move and rename vanilla artifact to prevent collision
+for f in out/target/product/larry/EvolutionX*.zip; do
+    [ -f "$f" ] && mv "$f" "out/artifacts/$(basename "$f" .zip)-VANILLA.zip"
+done
 
-# --- BUILD 2: GAPPS ---
-echo "========================================="
-echo "  Starting Evolution X (GApps Build)"
-echo "========================================="
+# ========================================================
+# PHASE 5: GAPPS BUILD
+# ========================================================
+echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Evolution X (GApps Build)...${NC}"
+
+# Clear Soong intermediate cache to prevent GMS flag contamination
+rm -rf out/soong
 export WITH_GMS=true
 lunch lineage_larry-bp4a-userdebug
-make clean
+make installclean
 m evolution -j$(nproc --all)
 
-# Move GApps build zip
-mv out/target/product/larry/EvolutionX*.zip out/artifacts/ 2>/dev/null || true
-
+# Move and rename GApps artifact
+for f in out/target/product/larry/EvolutionX*.zip; do
+    [ -f "$f" ] && mv "$f" "out/artifacts/$(basename "$f" .zip)-GAPPS.zip"
+done
 # ========================================================
 #  EXECUTION TIME BREAKDOWN
 # ========================================================
