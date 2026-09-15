@@ -40,7 +40,7 @@ echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 4/4] Setting up environment & starting compilation...${NC}"
 . build/envsetup.sh
-lunch lineage_larry-bp4a-user
+lunch lineage_larry-bp4a-userdebug
 echo -e "${BLUE}➜ Running installclean...${NC}"
 
 make installclean
