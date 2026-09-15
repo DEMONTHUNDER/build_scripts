@@ -73,7 +73,7 @@ echo "  Starting Evolution X (GApps Build)"
 echo "========================================="
 export WITH_GMS=true
 lunch lineage_larry-bp4a-userdebug
-make installclean
+make clean
 m evolution -j$(nproc --all)
 
 # Move GApps build zip
