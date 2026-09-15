@@ -22,12 +22,12 @@ rm -rf kernel/oneplus/sm6375 hardware/oplus
 echo -e "\n${BLUE}➜ [PHASE 2/4] Syncing Evolution X Repositories...${NC}"
 repo init -u https://github.com/Evolution-X/manifest -b bka --git-lfs
 repo sync -c -j$(nproc --all) --force-sync --no-clone-bundle --no-tags
+/opt/crave/resync.sh
 echo -e "${GREEN}✔ Sync Complete.${NC}"
 # ========================================================
 #  PHASE 3: CLONING TREES
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 3/4] Downloading Device Trees...${NC}"
-
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b sixteen-qpr2 device/oneplus/larry --depth=1
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr2 device/oneplus/sm6375-common --depth=1
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b lineage-23.2 vendor/oneplus/larry --depth=1
@@ -40,9 +40,9 @@ echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 4/4] Setting up environment & starting compilation...${NC}"
 . build/envsetup.sh
-# Target the lunch combo
 lunch lineage_larry-bp4a-user
 echo -e "${BLUE}➜ Running installclean...${NC}"
+
 make installclean
 
 echo "========================================="
