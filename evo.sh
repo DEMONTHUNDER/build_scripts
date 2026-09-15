@@ -41,35 +41,7 @@ git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b l
 git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr2 hardware/oplus --depth=1
 echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
 
-# ========================================================
-# CCACHE SETUP (CRITICAL FOR CONTAINER RUNNERS)
-# ========================================================
-echo -e "\n${BLUE}➜ Setting up ccache...${NC}"
 
-# 1. Install ccache via apt non-interactively if missing
-if ! command -v ccache &> /dev/null; then
-    echo "ccache not found. Installing..."
-    export DEBIAN_FRONTEND=noninteractive
-    sudo apt-get update -qq
-    sudo apt-get install -y -qq ccache
-fi
-
-# 2. Export variables BEFORE envsetup.sh
-export USE_CCACHE=1
-export CCACHE_EXEC=$(which ccache)
-export CCACHE_DIR=/tmp/ccache
-export CCACHE_COMPRESS=1
-export CCACHE_COMPRESSLEVEL=1
-
-# 3. Create cache dir and ensure proper write permissions
-mkdir -p "$CCACHE_DIR"
-chmod 777 "$CCACHE_DIR"
-
-# 4. Set size and verify binary works
-ccache -M 50G
-ccache -z
-
-echo -e "${GREEN}✔ ccache ready at: $CCACHE_EXEC (Cache Dir: $CCACHE_DIR)${NC}"
 # ========================================================
 #  PHASE 5: ENVIRONMENT & BUILDS
 # ========================================================
