@@ -41,6 +41,12 @@ git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b l
 git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr2 hardware/oplus --depth=1
 echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
 
+# Sign build with custom signing keys from Evolution-X
+git clone https://github.com/Evolution-X/vendor_evolution-priv_keys-template vendor/evolution-priv/keys --depth 1
+chmod +x vendor/evolution-priv/keys/keys.sh
+pushd vendor/evolution-priv/keys
+./keys.sh
+popd
 
 # ========================================================
 #  PHASE 5: ENVIRONMENT & BUILDS
