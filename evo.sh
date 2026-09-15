@@ -65,7 +65,7 @@ done
 echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Evolution X (GApps Build)...${NC}"
 
 # Clear Soong intermediate cache to prevent GMS flag contamination
-rm -rf out/soong
+
 export WITH_GMS=true
 lunch lineage_larry-bp4a-userdebug
 make installclean
