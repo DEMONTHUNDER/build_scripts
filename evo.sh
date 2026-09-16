@@ -8,7 +8,6 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m'
-
 # ========================================================
 #  PHASE 1: TARGETED CLEANUP (PREVENT TREE CONFLICTS)
 # ========================================================
@@ -18,7 +17,6 @@ rm -rf vendor/oneplus/larry vendor/oneplus/sm6375-common
 rm -rf kernel/oneplus/sm6375 hardware/oplus
 # Remove broken Evo-X LFS vendor_gms directory if it exists from previous runs
 rm -rf vendor/gms .repo/projects/vendor/gms.git
-
 # ========================================================
 #  PHASE 3: SOURCE SYNC
 # ========================================================
@@ -28,7 +26,6 @@ repo init -u https://github.com/Evolution-X/manifest -b bka --git-lfs
 repo sync -c -j$(nproc --all) --force-sync --force-remove-dirty --no-clone-bundle --no-tags
 /opt/crave/resync.sh
 echo -e "${GREEN}✔ Sync Complete.${NC}"
-
 # ========================================================
 #  PHASE 4: CLONING DEVICE TREES
 # ========================================================
@@ -54,38 +51,17 @@ pushd vendor/evolution-priv/keys
 yes "" | ./keys.sh
 
 popd
-# ========================================================
-# PHASE 4: ENVIRONMENT & VANILLA BUILD
-# ========================================================
-echo -e "\n${BLUE}➜ [PHASE 4/5] Starting Evolution X (Vanilla Build)...${NC}"
-. build/envsetup.sh
 
-export WITH_GMS=false
-lunch lineage_larry-bp4a-user
-make installclean
-m evolution -j$(nproc --all)
-
-# Move and rename vanilla artifact to prevent collision
-for f in out/target/product/larry/EvolutionX*.zip; do
-    [ -f "$f" ] && mv "$f" "out/artifacts/$(basename "$f" .zip)-VANILLA.zip"
-done
-
-# ========================================================
-# PHASE 5: GAPPS BUILD
-# ========================================================
-echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Evolution X (GApps Build)...${NC}"
-
-# Clear Soong intermediate cache to prevent GMS flag contamination
-
-export WITH_GMS=true
-lunch lineage_larry-bp4a-user
-make installclean
-m evolution -j$(nproc --all)
-
-# Move and rename GApps artifact
-for f in out/target/product/larry/EvolutionX*.zip; do
-    [ -f "$f" ] && mv "$f" "out/artifacts/$(basename "$f" .zip)-GAPPS.zip"
-done
+# Vanilla Build
+. build/envsetup.sh && \
+lunch lineage_larry-bp4a-user && make installclean && m evolution; \
+rm -rf out/target/product/vanilla && rm -rf out/target/product/gapps; \
+cd out/target/product && mv larry vanilla && cd ../../..; \
+# Gapps Build
+cd device/oneplus/larry && rm larry.mk && mv gapps.txt larry.mk && cd ../../..; \
+. build/envsetup.sh; \
+lunch lineage_larry-bp4a-user && make installclean && m evolution; \
+cd out/target/product && mv larry g
 # ========================================================
 #  EXECUTION TIME BREAKDOWN
 # ========================================================
