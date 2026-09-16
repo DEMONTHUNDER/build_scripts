@@ -40,19 +40,17 @@ echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
 # -------------------------------------------------------------
 # Sign build with custom keys (Non-interactive for Crave/CI)
 # -------------------------------------------------------------
-if [ ! -d "vendor/evolution-priv/keys" ]; then
-    git clone https://github.com/Evolution-X/vendor_evolution-priv_keys-template.git vendor/evolution-priv/keys --depth=1
-fi
-
+# Sign build with custom signing keys from Evolution-X
+git clone https://github.com/Evolution-X/vendor_evolution-priv_keys-template vendor/evolution-priv/keys --depth 1
 chmod +x vendor/evolution-priv/keys/keys.sh
 pushd vendor/evolution-priv/keys
-
-# Auto-generate without hanging on interactive password prompts
-yes "" | ./keys.sh
-
+./keys.sh
 popd
+
 . build/envsetup.sh
+
 lunch lineage_larry-bp4a-user
+
 m evolution
 # ========================================================
 #  EXECUTION TIME BREAKDOWN
