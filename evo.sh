@@ -51,17 +51,9 @@ pushd vendor/evolution-priv/keys
 yes "" | ./keys.sh
 
 popd
-
-# Vanilla Build
-. build/envsetup.sh && \
-lunch lineage_larry-bp4a-user && make installclean && m evolution; \
-rm -rf out/target/product/vanilla && rm -rf out/target/product/gapps; \
-cd out/target/product && mv larry vanilla && cd ../../..; \
-# Gapps Build
-cd device/oneplus/larry && rm larry.mk && mv gapps.txt larry.mk && cd ../../..; \
-. build/envsetup.sh; \
-lunch lineage_larry-bp4a-user && make installclean && m evolution; \
-cd out/target/product && mv larry g
+. build/envsetup.sh
+lunch lineage_larry-bp4a-user
+m evolution
 # ========================================================
 #  EXECUTION TIME BREAKDOWN
 # ========================================================
