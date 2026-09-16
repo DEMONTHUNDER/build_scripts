@@ -30,7 +30,7 @@ echo -e "${GREEN}✔ Sync Complete.${NC}"
 #  PHASE 4: CLONING DEVICE TREES
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 4/5] Downloading Device Trees...${NC}"
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b sixteen-qpr2 device/oneplus/larry --depth=1
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b evox device/oneplus/larry --depth=1
 git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr2 device/oneplus/sm6375-common --depth=1
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b lineage-23.2 vendor/oneplus/larry --depth=1
 git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b lineage-23.2 vendor/oneplus/sm6375-common --depth=1
