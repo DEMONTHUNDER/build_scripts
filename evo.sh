@@ -61,7 +61,7 @@ echo -e "\n${BLUE}➜ [PHASE 4/5] Starting Evolution X (Vanilla Build)...${NC}"
 . build/envsetup.sh
 
 export WITH_GMS=false
-lunch lineage_larry-bp4a-userdebug
+lunch lineage_larry-bp4a-user
 make installclean
 m evolution -j$(nproc --all)
 
@@ -78,7 +78,7 @@ echo -e "\n${BLUE}➜ [PHASE 5/5] Starting Evolution X (GApps Build)...${NC}"
 # Clear Soong intermediate cache to prevent GMS flag contamination
 
 export WITH_GMS=true
-lunch lineage_larry-bp4a-userdebug
+lunch lineage_larry-bp4a-user
 make installclean
 m evolution -j$(nproc --all)
 
