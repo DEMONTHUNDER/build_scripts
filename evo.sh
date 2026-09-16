@@ -40,9 +40,20 @@ git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-comm
 git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b lineage-23.2 kernel/oneplus/sm6375 --depth=1
 git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr2 hardware/oplus --depth=1
 echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
+# -------------------------------------------------------------
+# Sign build with custom keys (Non-interactive for Crave/CI)
+# -------------------------------------------------------------
+if [ ! -d "vendor/evolution-priv/keys" ]; then
+    git clone https://github.com/Evolution-X/vendor_evolution-priv_keys-template.git vendor/evolution-priv/keys --depth=1
+fi
 
+chmod +x vendor/evolution-priv/keys/keys.sh
+pushd vendor/evolution-priv/keys
 
+# Auto-generate without hanging on interactive password prompts
+yes "" | ./keys.sh
 
+popd
 # ========================================================
 # PHASE 4: ENVIRONMENT & VANILLA BUILD
 # ========================================================
