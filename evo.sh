@@ -15,6 +15,13 @@ echo -e "\n${BLUE}➜ [PHASE 1/5] Cleaning old trees and Soong cache...${NC}"
 rm -rf device/oneplus/larry device/oneplus/sm6375-common
 rm -rf vendor/oneplus/larry vendor/oneplus/sm6375-common
 rm -rf kernel/oneplus/sm6375 hardware/oplus
+rm -rf device/oneplus/larry                                                                                                                                                                   
+rm -rf device/oneplus/sm6375-common                                                                                                                                                           
+rm -rf hardware/oplus                                                                                                                                                                         
+rm -rf kernel/oneplus/sm6375                                                                                                                                                                  
+rm -rf vendor/oneplus/larry                                                                                                                                                                   
+rm -rf vendor/oneplus/sm6375-common                                                                                                                                                           
+
 # Remove broken Evo-X LFS vendor_gms directory if it exists from previous runs
 rm -rf vendor/gms .repo/projects/vendor/gms.git
 # ========================================================
