@@ -21,7 +21,7 @@ rm -rf vendor/gms .repo/projects/vendor/gms.git
 #  PHASE 3: SOURCE SYNC
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 3/5] Syncing Evolution X Repositories...${NC}"
-repo init -u https://github.com/Evolution-X/manifest -b bka --git-lfs
+repo init -u https://github.com/Evolution-X/manifest -b cnb --git-lfs
 /opt/crave/resync.sh
 repo sync -c -j$(nproc --all) --force-sync --force-remove-dirty --no-clone-bundle --no-tags
 /opt/crave/resync.sh
@@ -30,12 +30,12 @@ echo -e "${GREEN}✔ Sync Complete.${NC}"
 #  PHASE 4: CLONING DEVICE TREES
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 4/5] Downloading Device Trees...${NC}"
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b evox device/oneplus/larry --depth=1
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr2 device/oneplus/sm6375-common --depth=1
-git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b lineage-23.2 vendor/oneplus/larry --depth=1
-git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b lineage-23.2 vendor/oneplus/sm6375-common --depth=1
-git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b lineage-23.2 kernel/oneplus/sm6375 --depth=1
-git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b sixteen-qpr2 hardware/oplus --depth=1
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b a17evox device/oneplus/larry --depth=1
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b a17 device/oneplus/sm6375-common --depth=1
+git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b a17 vendor/oneplus/larry --depth=1
+git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b a17 vendor/oneplus/sm6375-common --depth=1
+git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b a17 kernel/oneplus/sm6375 --depth=1
+git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b a17 hardware/oplus --depth=1
 echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
 # -------------------------------------------------------------
 # Sign build with custom keys (Non-interactive for Crave/CI)
@@ -49,7 +49,7 @@ popd
 
 . build/envsetup.sh
 
-lunch lineage_larry-bp4a-user
+lunch lineage_larry-cp2a-user
 
 m evolution
 # ========================================================
