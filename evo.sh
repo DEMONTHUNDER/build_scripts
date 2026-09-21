@@ -8,6 +8,16 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m'
+
+# ============================================================
+# 1. Memory Safety & Soong Pre-Flight Config (Top of Script)
+# ============================================================
+# Remove dirty/corrupted blueprint intermediate outputs
+rm -rf out/soong/build.lineage_larry.ninja out/soong/.bootstrap
+
+# Constrain JVM memory so it leaves RAM available for Soong
+export _JAVA_OPTIONS="-Xmx6g"
+export SOONG_ALLOW_MISSING_DEPENDENCIES=true
 # ========================================================
 #  PHASE 1: TARGETED CLEANUP (PREVENT TREE CONFLICTS)
 # ========================================================
@@ -52,12 +62,25 @@ chmod +x vendor/evolution-priv/keys/keys.sh
 pushd vendor/evolution-priv/keys
 ./keys.sh
 popd
+# ============================================================
+# 2. ccache Configuration
+# ============================================================
+export USE_CCACHE=1
+export CCACHE_EXEC=$(which ccache)
+export CCACHE_DIR="${HOME}/.ccache"
+
+# Configure cache size and enable compression
+ccache -M 50G
+ccache -o compression=true
+
+# Zero stats at the start so you can inspect hits after the run
+ccache -z
 
 . build/envsetup.sh
 
 lunch lineage_larry-cp2a-user
 
-m evolution
+m -j$(nproc --ignore=2) evolution
 # ========================================================
 #  EXECUTION TIME BREAKDOWN
 # ========================================================
