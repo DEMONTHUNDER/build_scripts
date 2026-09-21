@@ -54,15 +54,7 @@ git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-comm
 git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b a17 kernel/oneplus/sm6375 --depth=1
 git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b a17 hardware/oplus --depth=1
 echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
-# -------------------------------------------------------------
-# Sign build with custom keys (Non-interactive for Crave/CI)
-# -------------------------------------------------------------
-# Sign build with custom signing keys from Evolution-X
-git clone https://github.com/Evolution-X/vendor_evolution-priv_keys-template vendor/evolution-priv/keys --depth 1
-chmod +x vendor/evolution-priv/keys/keys.sh
-pushd vendor/evolution-priv/keys
-./keys.sh
-popd
+
 # ============================================================
 # 2. ccache Configuration
 # ============================================================
