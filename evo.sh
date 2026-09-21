@@ -38,7 +38,7 @@ rm -rf vendor/gms .repo/projects/vendor/gms.git
 #  PHASE 3: SOURCE SYNC
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 3/5] Syncing Evolution X Repositories...${NC}"
-repo init -u https://github.com/Evolution-X/manifest -b cnb --git-lfs
+repo init -u https://github.com/Evolution-X/manifest -b cnb --git-lfs --depth=1
 
 /opt/crave/resync.sh
 repo sync -c --force-sync --force-remove-dirty --no-tags --no-clone-bundle # For fixing sync error
