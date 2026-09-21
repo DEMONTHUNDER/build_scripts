@@ -39,8 +39,9 @@ rm -rf vendor/gms .repo/projects/vendor/gms.git
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 3/5] Syncing Evolution X Repositories...${NC}"
 repo init -u https://github.com/Evolution-X/manifest -b cnb --git-lfs
-repo sync -c -j$(nproc --all) --force-sync --force-remove-dirty --no-clone-bundle --no-tags
+
 /opt/crave/resync.sh
+repo sync -c --force-sync --force-remove-dirty --no-tags --no-clone-bundle # For fixing sync error
 echo -e "${GREEN}✔ Sync Complete.${NC}"
 # ========================================================
 #  PHASE 4: CLONING DEVICE TREES
