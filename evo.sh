@@ -15,7 +15,11 @@ NC='\033[0m'
 # Remove dirty/corrupted blueprint intermediate outputs
 rm -rf out/soong/build.lineage_larry.ninja out/soong/.bootstrap
 
-# Constrain JVM memory so it leaves RAM available for Soong
+# 1. Force Go garbage collector to cap memory at 8GB (Stops soong OOM)
+export GOMEMLIMIT=8GiB
+export GOGC=50
+
+# 2. JVM cap & dependency resolution
 export _JAVA_OPTIONS="-Xmx6g"
 export SOONG_ALLOW_MISSING_DEPENDENCIES=true
 # ========================================================
@@ -31,7 +35,7 @@ rm -rf hardware/oplus
 rm -rf kernel/oneplus/sm6375                                                                                                                                                                  
 rm -rf vendor/oneplus/larry                                                                                                                                                                   
 rm -rf vendor/oneplus/sm6375-common                                                                                                                                                           
-
+rm -rf out/soong/build.lineage_larry.ninja out/soong/.bootstrap out/soong/.minibootstrap
 # Remove broken Evo-X LFS vendor_gms directory if it exists from previous runs
 rm -rf vendor/gms .repo/projects/vendor/gms.git
 # ========================================================
@@ -58,9 +62,16 @@ echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
 # ============================================================
 # 2. ccache Configuration
 # ============================================================
+# Ensure ccache is present in the container
+if ! command -v ccache &> /dev/null; then
+    sudo apt-get update && sudo apt-get install -y ccache
+fi
+
 export USE_CCACHE=1
 export CCACHE_EXEC=$(which ccache)
 export CCACHE_DIR="${HOME}/.ccache"
+ccache -M 50G
+ccache -o compression=true
 
 # Configure cache size and enable compression
 ccache -M 50G
@@ -71,9 +82,9 @@ ccache -z
 
 . build/envsetup.sh
 
-lunch lineage_larry-cp2a-user
+lunch lineage_larry-cp2a-userdebug
 
-m -j$(nproc --ignore=2) evolution
+m evolution
 # ========================================================
 #  EXECUTION TIME BREAKDOWN
 # ========================================================
