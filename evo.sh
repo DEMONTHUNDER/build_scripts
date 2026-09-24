@@ -81,7 +81,7 @@ ccache -z
 
 . build/envsetup.sh
 
-lunch lineage_larry-cp2a-user
+lunch lineage_larry-cp2a-userdebug
 
 m evolution
 # ========================================================
