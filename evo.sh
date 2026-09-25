@@ -24,7 +24,6 @@ rm -rf hardware/oplus
 rm -rf kernel/oneplus/sm6375                                                                                                                                                                  
 rm -rf vendor/oneplus/larry                                                                                                                                                                   
 rm -rf vendor/oneplus/sm6375-common                                                                                                                                                           
-rm -rf out/soong/build.lineage_larry.ninja out/soong/.bootstrap out/soong/.minibootstrap
 # Remove broken Evo-X LFS vendor_gms directory if it exists from previous runs
 rm -rf vendor/gms .repo/projects/vendor/gms.git
 
