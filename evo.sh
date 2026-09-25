@@ -27,15 +27,6 @@ rm -rf vendor/oneplus/sm6375-common
 rm -rf out/soong/build.lineage_larry.ninja out/soong/.bootstrap out/soong/.minibootstrap
 # Remove broken Evo-X LFS vendor_gms directory if it exists from previous runs
 rm -rf vendor/gms .repo/projects/vendor/gms.git
-# Remove dirty/corrupted blueprint intermediate outputs
-rm -rf out/soong/build.lineage_larry.ninja out/soong/.bootstrap
-rm -rf out/soong/.intermediates/system/sepolicy/
-rm -rf out/target/product/larry/obj/ETC/sepolicy*
-rm -rf out/target/product/larry/vendor/etc/selinux/
-rm -f hardware/oplus/sepolicy/qti/vendor/vendor_poweroffalarm_app.te
-rm -rf out/target/product/larry/root/
-rm -rf out/target/product/larry/system/
-rm -rf out/target/product/larry/vendor/
 
 # ========================================================
 #  PHASE 3: SOURCE SYNC
