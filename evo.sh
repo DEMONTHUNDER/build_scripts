@@ -26,7 +26,6 @@ rm -rf vendor/oneplus/sm6375-common
 # ========================================================
 echo -e "\n${BLUE}➜ [PHASE 3/5] Syncing Evolution X Repositories...${NC}"
 repo init -u https://github.com/Evolution-X/manifest -b bka --git-lfs --depth=1
-
 /opt/crave/resync.sh
 repo sync -c --force-sync --force-remove-dirty --no-tags --no-clone-bundle # For fixing sync error
 echo -e "${GREEN}✔ Sync Complete.${NC}"
