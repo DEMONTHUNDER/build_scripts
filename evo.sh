@@ -40,7 +40,6 @@ git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-comm
 git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b lineage-23.2 kernel/oneplus/sm6375 --depth=1
 git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b lineage-23.2 hardware/oplus --depth=1
 echo -e "${GREEN}✔ All repositories cloned successfully.${NC}"
-
 # ============================================================
 # 2. ccache Configuration
 # ============================================================
