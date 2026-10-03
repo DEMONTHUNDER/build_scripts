@@ -49,21 +49,7 @@ gk -s
 echo "========================================="
 echo "  Starting RisingOS Compilation"
 echo "========================================="
-
 rise b
-
-if [ $? -eq 0 ]; then
-    echo "✔ Build Successful! Locating output..."
-    FILENAME=$(ls -t out/target/product/larry/RisingOS*.zip | grep -v "md5" | head -n 1)
-    
-    if [ -f "$FILENAME" ]; then
-        echo "✔ ROM compiled successfully! Output file: $FILENAME"
-    else
-        echo "❌ Build finished but ZIP file was not found."
-    fi
-else
-    echo "❌ Build Failed. Please inspect the build logs above."
-fi
 
 END_TIME=$(date +%s)
 ELAPSED=$((END_TIME - START_TIME))
