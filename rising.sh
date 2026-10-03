@@ -8,7 +8,7 @@ START_TIME=$(date +%s)
 # ========================================================
 echo "➜ Syncing RisingOS Source..."
 
-repo init -u https://github.com/RisingOS-Revived/android -b seventeen --git-lfs
+repo init -u https://github.com/RisingOS-Revived/android -b seventeen --git-lfs --depth=1
 /opt/crave/resync.sh
 
 echo "✔ Source Sync Complete."
