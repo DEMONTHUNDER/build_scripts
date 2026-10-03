@@ -22,7 +22,6 @@ echo "➜ Cleaning and downloading device trees..."
 rm -rf device/oneplus/larry device/oneplus/sm6375-common
 rm -rf vendor/oneplus/larry vendor/oneplus/sm6375-common
 rm -rf kernel/oneplus/sm6375 hardware/oplus
-rm -rf .repo/local_manifests
 # ========================================================
 #  PHASE 3: FAST DEVICE TREE CLONING
 # ========================================================
