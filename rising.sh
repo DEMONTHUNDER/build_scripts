@@ -8,7 +8,7 @@ START_TIME=$(date +%s)
 # ========================================================
 echo "➜ Syncing RisingOS Source..."
 
-repo init -u https://github.com/RisingOS-Revived/android -b sixteen-qpr2 --git-lfs
+repo init -u https://github.com/RisingOS-Revived/android -b seventeen --git-lfs
 /opt/crave/resync.sh
 
 echo "✔ Source Sync Complete."
@@ -28,12 +28,12 @@ rm -rf .repo/local_manifests
 # ========================================================
 echo "➜ Downloading Device Trees..."
 
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b rising device/oneplus/larry --depth=1
-git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b sixteen-qpr2 device/oneplus/sm6375-common --depth=1
-git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b lineage-23.2 vendor/oneplus/larry --depth=1
-git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b lineage-23.2 vendor/oneplus/sm6375-common --depth=1
-git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b lineage-23.2 kernel/oneplus/sm6375 --depth=1
-git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git  -b sixteen-qpr2 hardware/oplus --depth=1
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_larry.git -b a17evox device/oneplus/larry --depth=1
+git clone https://github.com/DEMONTHUNDER/android_device_oneplus_sm6375-common.git -b a17 device/oneplus/sm6375-common --depth=1
+git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_larry.git -b a17 vendor/oneplus/larry --depth=1
+git clone https://github.com/DEMONTHUNDER/proprietary_vendor_oneplus_sm6375-common.git -b a17 vendor/oneplus/sm6375-common --depth=1
+git clone https://github.com/DEMONTHUNDER/android_kernel_oneplus_sm6375.git -b a17 kernel/oneplus/sm6375 --depth=1
+git clone https://github.com/DEMONTHUNDER/android_hardware_oplus.git -b a17 hardware/oplus --depth=1
 
 echo "✔ Trees successfully cloned."
 
